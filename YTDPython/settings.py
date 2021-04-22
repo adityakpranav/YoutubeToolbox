@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-fc7#vvg#nft!977hqr66j19hl8o8on&%!$m$x@9x!#(-m1@551
 DEBUG = False
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1',
-                 'https://youtubetoolbox.herokuapp.com/']
+                 'youtubetoolbox.herokuapp.com']
 # ALLOWED_HOSTS = ['*']
 
 
