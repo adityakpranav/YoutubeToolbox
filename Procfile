@@ -1,1 +1,1 @@
-web: gunicorn Controller:app --preload --log-file -
+web: gunicorn YTDPython.wsgi --log-file -
