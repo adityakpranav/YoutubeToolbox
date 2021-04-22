@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+
+    function getId(url) {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+        const match = url.match(regExp);
+
+        return (match && match[2].length === 11)
+            ? match[2]
+            : null;
+    }
+
+
+    function processUrl() {
+
+        var postUrl = '/fetchVideo';
+        var dataUrl = document.getElementById('inputUrl').value;
+        var csrftoken = getCookie('csrftoken');
+
+        $("#downloader").hide();
+
+
+        $("#id_loader").show();
+
+        embed_id = ' <iframe width="320" height="200" src="//www.youtube.com/embed/' + getId(dataUrl) + '" frameborder="0" allowfullscreen></iframe>'
+
+        //$('#embedVideo').html(embed_id)
+        //alert(dataUrl);
+        $.ajax({
+            url: postUrl,
+            type: 'POST',
+            data: {
+                postData: dataUrl,
+                csrfmiddlewaretoken: csrftoken
+
+            },
+
+            'success': function (result) {
+
+                $("#id_loader").hide();
+
+                $("#downloader").show();
+
+                $('#embedVideo').html(embed_id)
+
+                successprocessUrl(result)
+
+            },
+            error: function (response) {
+                console.log("error :: " + response)
+            }
+
+        });
+
+
+    }
+
+    function successprocessUrl(response) {
+
+        result = response['data']
+        console.log("Success:: " + JSON.stringify(result['title'], undefined, 2));
+
+
+        $('#videoDetail').html(result['title'] +
+            "<br>Time : " + result['time'] +
+            "<br>Author : " + result['author']);
+
+        $("#VideoDownloadUrl").empty()
+        $.each(result['Vdata'], function (keyName, val) {
+            //$("#VideoDownloadUrl").append($("<a class='dropdown-item' target='_blank' download = 'download.mp4'></a>").attr('href',val).text(keyName));
+            //$("#VideoDownloadUrl").append($("<a class='dropdown-item' target='_blank' download = 'download.mp4'></a>")[0].click(function () { saveAs(val, "download.mp4"); return false; }))//attr('href',val).text(keyName));
+
+            args = "javascript:saveContent('" + val + "','download.mp4','video/mp4');";
+
+            $("#VideoDownloadUrl").append($("<a class='dropdown-item' target='_blank' download='download.mp4' ></a>").attr('href', val).text(keyName));
+        });
+
+        $("#AudioDownloadUrl").empty()
+        $.each(result['Adata'], function (keyName, val) {
+            //args = "javascript:saveAs('" + val + "','download.mp3');";
+            args = "javascript:saveContent('" + val + "','download.mp3','audio/mpeg');";
+            $("#AudioDownloadUrl").append($("<a class='dropdown-item' target='_blank'></a>").attr('href', val).text(keyName));
+        });
+
+
+    }
+
+
+</script>
+
+
+<!-- spacing -->
+<div style='height: 40px;'></div>
+
+
+<div class="row justify-content-md-center">
+    <div class="col-md-auto">
+        <p style="color:grey; font-weight: 300; font-family: Courier;font-size: 20px;">Paste Youtube Url in below Box
+        </p>
+    </div>
+</div>
+
+
+<!-- spacing -->
+<div style='height: 40px;'></div>
+
+<div class="row justify-content-md-center">
+
+    <div class="col col-lg-2"></div>
+
+    <div class="col col-lg-7">
+
+        <!-- <form id="a-form" method="POST">
+            {% csrf_token %}
+            <input type="url" class="form-control" id="inputUrl" value="https://www.youtube.com/watch?v=e1IyzVyrLSU">
+        </form> -->
+        {% csrf_token %}
+        <!-- <input type="url" class="form-control" id="inputUrl" value="https://www.youtube.com/watch?v=e1IyzVyrLSU"> -->
+        <input type="url" class="form-control" id="inputUrl" value="">
+
+    </div>
+    <div class="col col-lg-3">
+        <button form="a-form" type="submit" class="btn btn-primary" onclick="processUrl();">Download</button>
+    </div>
+
+</div>
+
+<div style='height: 40px;'></div>
+
+<!-- LOADER -->
+<div class="row justify-content-md-center" id="id_loader" style="display: none;">
+
+    <div class="col-md-auto">
+        <div class="spinner-grow" style="width: 3rem; height: 3rem;" role="status">
+            <div style='height: 50px;'></div>
+            <span class="sr-only" style="padding-top :20px;" id="outputVideo">Loading...</span>
+        </div>
+
+    </div>
+</div>
+
+
+
+<div class="row justify-content-md-center" id='downloader' style="display: none;">
+    <div class="col col-md-4" id='embedVideo'>
+
+    </div>
+    <div class="col col-md-3" id='downloadDDL'>
+        <div class="row">
+            <p style="color:grey; font-weight: 100; font-family: Courier;font-size: 16px;" id='videoDetail'>
+
+            </p>
+        </div>
+        <div class="row" id='videoDownload'>
+
+            <!-- Video Urls -->
+            <div class="col dropdown">
+                <button class="btn btn-secondary dropdown-toggle dropbtn" type="button" id="dropdownMenuButton"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Download
+                </button>
+                <div class="dropdown-content" id='VideoDownloadUrl' aria-labelledby="dropdownMenuButton">
+                    <!-- <a class="dropdown-item" href="#">Action</a> -->
+
+
+                </div>
+
+
+            </div>
+
+            <!-- Audio urls -->
+            <div class="col">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle dropbtn" type="button" id="dropdownMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Audio
+                    </button>
+
+                    <div class="dropdown-content" id='AudioDownloadUrl' aria-labelledby="dropdownMenuButton">
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- 
+<div class="row justify-content-md-center" id="outputVideo" style="display: block;">
+    <div class="col col-lg-2"></div>
+    <div class="col col-lg-7" id='embedVideo'>
+
+
+    </div>
+    <div class="col col-lg-3" id='downloadDDL'>
+
+
+    </div>
+</div> -->
+
+
+{% endblock %}
