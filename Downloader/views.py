@@ -11,6 +11,8 @@ import json
 # Youtube dependency
 #from pytube import YouTube
 import pafy
+from urllib import request
+from datetime import datetime
 
 
 def index(request):
@@ -86,6 +88,36 @@ def fetchVideoURL(url):
     return(payload)
 
     # print(fetchVideoURL("https://www.youtube.com/watch?v=e1IyzVyrLSU"))
+
+
+def temp_fetchVaccCenter_redirect(jsonrequest):
+
+    if request.method == 'POST':
+
+        ourid = request.POST["postData"]
+
+        headers = {
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Connection":	"keep-alive",
+            "DNT":	"1",
+            "TE": "Trailers",
+            "Upgrade-Insecure-Requests": "1",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0"}
+
+        url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict?district_id=%s&date=%s" % (
+            ourid, datetime.today().strftime("%d-%m-%Y"))
+
+        req = request.Request(url, None, headers)
+        data = json.loads(request.urlopen(req).read())
+
+        return JsonHttpResponse(data)
+
+    else:
+
+        html = '<p>This is not ajax</p>'
+        return JsonResponse({{'data': {'msg': "Error"}}})
 
 
 # def Downloader():
