@@ -93,7 +93,8 @@ def fetchVideoURL(url):
 
 def temp_fetchVaccCenter_redirect(jsonrequest):
 
-    if request.method == 'POST':
+    # if request.method == 'POST':
+    if jsonrequest != {}:
 
         ourid=request.POST["postData"]
 
