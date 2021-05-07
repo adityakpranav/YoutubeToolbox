@@ -18,7 +18,7 @@ from datetime import datetime
 def index(request):
     # print(list(get_files(StaticFilesStorage(), location='static')))
     print("[Log ] index-temp_fetchVaccCenter_redirect: ",
-          temp_fetchVaccCenter_redirect({"postData": "645"}))
+          str(temp_fetchVaccCenter_redirect({"postData": "645"})))
     return render(request, 'Downloader/index.html')
 
 
