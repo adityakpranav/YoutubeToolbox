@@ -17,7 +17,8 @@ from datetime import datetime
 
 def index(request):
     # print(list(get_files(StaticFilesStorage(), location='static')))
-    #print("[Log ] index-temp_fetchVaccCenter_redirect: ",temp_fetchVaccCenter_redirect({"postData": "645"}))
+    print("[Log ] index-temp_fetchVaccCenter_redirect: ",
+          temp_fetchVaccCenter_redirect({"postData": "645"}))
     return render(request, 'Downloader/index.html')
 
 
@@ -115,12 +116,13 @@ def temp_fetchVaccCenter_redirect(jsonrequest):
         req = request.Request(url, None, headers)
         data = json.loads(request.urlopen(req).read())
 
-        return JsonHttpResponse(data)
+        # return JsonHttpResponse(data)
+        return(data)
 
     else:
 
         html = '<p>This is not ajax</p>'
-        return JsonResponse({{'data': {'msg': "Error"}}})
+        return({{'data': {'msg': "Error"}}})
 
 
 # def Downloader():
