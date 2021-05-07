@@ -2,6 +2,24 @@
 
 {% block content %}
 <script>
+    window.onload = function () {
+
+        postUrl = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=654&date=07-05-2021"
+        $.ajax({
+            url: postUrl,
+            type: 'GET',
+            'success': function (result) {
+
+                console.log()
+
+            },
+            error: function (response) {
+                console.log("error :: " + response)
+            }
+
+        });
+    };
+
 
     function getId(url) {
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
